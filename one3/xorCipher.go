@@ -24,6 +24,7 @@ func decodeHex(buffer string) []byte {
 
 func frequentCharacterCount(str string) int {
 	answer := 0
+	str = strings.ToUpper(str)
 	for _, c := range str {
 		if strings.ContainsRune(frequentString1, c) {
 			answer += 2
@@ -47,7 +48,7 @@ func (s byFrequency) Less(i, j int) bool {
 }
 
 // Decipher  This will decipher them all...
-func Decipher(cipher string) string {
+func Decipher(cipher string) []byte {
 	cipherBytes := decodeHex(cipher)
 
 	var possibleAnswers []string
@@ -60,10 +61,13 @@ func Decipher(cipher string) string {
 			answer[i] = a ^ b
 		}
 
-		possibleAnswers[i] = strings.ToUpper(string(answer))
+		possibleAnswers[i] = string(answer)
 	}
 
+	// sort things according to character frequency
 	sort.Sort(byFrequency(possibleAnswers))
 
-	return possibleAnswers[len(possibleAnswers)-1]
+	returnValue := possibleAnswers[len(possibleAnswers)-1]
+
+	return []byte(returnValue)
 }
