@@ -2,14 +2,14 @@ package one3
 
 import (
 	"encoding/hex"
-	"fmt"
 	"log"
 	"sort"
 	"strings"
 )
 
-type byFrequency [26]string
+type byFrequency []string
 
+const numberOfChars = 26
 const frequentString1 string = "ETAOIN"
 const frequentString2 string = "SHRDLU"
 
@@ -24,7 +24,6 @@ func decodeHex(buffer string) []byte {
 
 func frequentCharacterCount(str string) int {
 	answer := 0
-	str = strings.ToUpper(str)
 	for _, c := range str {
 		if strings.ContainsRune(frequentString1, c) {
 			answer += 2
@@ -44,7 +43,6 @@ func (s byFrequency) Swap(i, j int) {
 }
 
 func (s byFrequency) Less(i, j int) bool {
-	fmt.Println("comparing ", s[i][:4], " ", frequentCharacterCount(s[i]), " with ", s[j][:4], " ", frequentCharacterCount(s[j]))
 	return frequentCharacterCount(s[i]) < frequentCharacterCount(s[j])
 }
 
@@ -52,8 +50,9 @@ func (s byFrequency) Less(i, j int) bool {
 func Decipher(cipher string) string {
 	cipherBytes := decodeHex(cipher)
 
-	var possibleAnswers [26]string
-	for i := 0; i < 26; i++ {
+	var possibleAnswers []string
+	possibleAnswers = make([]string, numberOfChars)
+	for i := 0; i < numberOfChars; i++ {
 		a := byte('a' + i)
 		answer := make([]byte, len(cipherBytes))
 
@@ -61,17 +60,10 @@ func Decipher(cipher string) string {
 			answer[i] = a ^ b
 		}
 
-		fmt.Println(string(answer))
-		possibleAnswers[i] = string(answer)
+		possibleAnswers[i] = strings.ToUpper(string(answer))
 	}
 
 	sort.Sort(byFrequency(possibleAnswers))
-
-	fmt.Println(possibleAnswers[len(possibleAnswers)-3:])
-
-	for _, answer := range possibleAnswers {
-		fmt.Println(frequentCharacterCount(answer))
-	}
 
 	return possibleAnswers[len(possibleAnswers)-1]
 }
